@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pomodoro Timer</title>
+  <style>
+    body {
+      font-family: 'SF Pro', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #fff;
+      transition: background-color 0.3s, color 0.3s;
+      color: #1f1c1c;
+    }
+    .dark-mode {
+      background-color: #1f1c1c;
+      color: #fff;
+    }
+    .container {
+      text-align: center;
+    }
+    .timer {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .btn {
+      background: linear-gradient(145deg, #9bafd9, #103783);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+    .toggle-switch {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      margin-left: 8px;
+    }
+    .switch input {
+      display: none;
+    }
+    .slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      border-radius: 24px;
+      transition: 0.4s;
+    }
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: 0.4s;
+    }
+    input:checked + .slider {
+      background: linear-gradient(180deg, #9bafd9,#103783);
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="timer" id="timer">26:00</div>
+    <div class="buttons">
+      <button class="btn" id="startPauseBtn">Start</button>
+      <button class="btn" id="resetBtn">Reset</button>
+      <label class="toggle-switch">
+        <span>Dark Mode</span>
+        <div class="switch">
+          <input type="checkbox" id="darkToggle"/>
+          <span class="slider"></span>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <script>
+    let isRunning = false;
+    let timer;
+    let timeLeft = 26 * 60;
+
+    const timerDisplay = document.getElementById("timer");
+    const startPauseBtn = document.getElementById("startPauseBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const darkToggle = document.getElementById("darkToggle");
+
+    function updateDisplay() {
+      const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+      const seconds = (timeLeft % 60).toString().padStart(2, '0');
+      timerDisplay.textContent = `${minutes}:${seconds}`;
+    }
+
+    function startTimer() {
+      isRunning = true;
+      startPauseBtn.textContent = "Pause";
+      timer = setInterval(() => {
+        if (timeLeft > 0) {
+          timeLeft--;
+          updateDisplay();
+        } else {
+          clearInterval(timer);
+          isRunning = false;
+          startPauseBtn.textContent = "Start";
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      isRunning = false;
+      clearInterval(timer);
+      startPauseBtn.textContent = "Start";
+    }
+
+    startPauseBtn.onclick = () => {
+      if (!isRunning) {
+        startTimer();
+      } else {
+        pauseTimer();
+      }
+    };
+
+    resetBtn.onclick = () => {
+      pauseTimer();
+      timeLeft = 26 * 60;
+      updateDisplay();
+    };
+
+    darkToggle.onchange = () => {
+      document.body.classList.toggle("dark-mode");
+    };
+
+    updateDisplay();
+  </script>
+</body>
+</html>
